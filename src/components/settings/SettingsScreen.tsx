@@ -1,4 +1,4 @@
-'use client';
+'use client'; // <<< هذا هو السطر الوحيد الذي تمت إضافته
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
