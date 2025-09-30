@@ -92,9 +92,9 @@ export interface NavigationItem {
   active: boolean;
 }
 
-// <<< بداية الإضافة: هذا هو النوع الجديد الذي يحتاجه المشروع
+// <<< بداية التعديل: تم تغيير 'string' إلى القيم الصحيحة
 export interface ThemeSettings {
   theme: 'light' | 'dark' | 'system';
-  fontSize: string;
+  fontSize: 'small' | 'medium' | 'large';
 }
-// <<< نهاية الإضافة
+// <<< نهاية التعديل

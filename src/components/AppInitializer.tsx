@@ -2,10 +2,11 @@
 
 import { useEffect } from 'react';
 import { initializeAppSettings, applyTheme } from '@/lib/theme-language';
-import { ThemeSettings } from '@/types'; // الآن هذا الاستيراد يعمل بدون خطأ
+import { ThemeSettings } from '@/types';
 
-// تعريف الأنواع المسموح بها للثيم مرة أخرى هنا للتأكيد
+// تعريف الأنواع المسموح بها للتأكيد
 type Theme = 'light' | 'dark' | 'system';
+type FontSize = 'small' | 'medium' | 'large';
 
 /**
  * مكون لتهيئة الإعدادات العامة للتطبيق عند البدء
@@ -16,19 +17,26 @@ export default function AppInitializer() {
     initializeAppSettings();
     
     const timer = setTimeout(() => {
-      // 1. نحصل على الثيم المحفوظ من الذاكرة أو نستخدم القيمة الافتراضية
+      // 1. التعامل مع الثيم
       const savedTheme = localStorage.getItem('app-theme-current') || 'dark';
-
-      // 2. نتأكد من أن القيمة المحفوظة هي واحدة من القيم المسموح بها
       const validThemes: Theme[] = ['light', 'dark', 'system'];
       const finalTheme: Theme = validThemes.includes(savedTheme as Theme) 
         ? (savedTheme as Theme) 
         : 'dark';
 
-      // 3. ننشئ كائن الإعدادات بالنوع الصحيح والمطابق للقواعد
+      // <<< بداية التعديل: التعامل الصحيح مع حجم الخط
+      // 2. التعامل مع حجم الخط
+      const savedFontSize = localStorage.getItem('app-font-size');
+      const validFontSizes: FontSize[] = ['small', 'medium', 'large'];
+      const finalFontSize: FontSize = validFontSizes.includes(savedFontSize as FontSize) 
+        ? (savedFontSize as FontSize) 
+        : 'medium'; // القيمة الافتراضية هي 'medium'
+      // <<< نهاية التعديل
+
+      // 3. إنشاء كائن الإعدادات الصحيح بالكامل
       const themeSettings: ThemeSettings = {
         theme: finalTheme,
-        fontSize: localStorage.getItem('app-font-size') || '16px', // قمت بتحسين هذا أيضاً
+        fontSize: finalFontSize, // استخدام القيمة الصحيحة والمتحقق منها
       };
       
       // 4. الآن نقوم بتطبيق الثيم، ولن يكون هناك أي خطأ

@@ -3,12 +3,11 @@
  */
 
 import { THEMES } from './constants';
+// <<< بداية الإضافة: استيراد النوع الموحد من المصدر الرئيسي
+import { ThemeSettings } from '@/types';
+// <<< نهاية الإضافة
 
-// إعدادات المظهر
-export interface ThemeSettings {
-  theme: 'dark' | 'light' | 'system';
-  fontSize: 'small' | 'medium' | 'large';
-}
+// <<< تم حذف التعريف المكرر لـ ThemeSettings من هنا
 
 // إعدادات اللغة
 export interface LanguageSettings {
@@ -92,7 +91,11 @@ export function loadThemeSettings(): ThemeSettings {
   const saved = localStorage.getItem('app-theme');
   if (saved) {
     try {
-      return JSON.parse(saved);
+      const parsed = JSON.parse(saved);
+      // تأكد من أن البيانات المحفوظة متوافقة
+      if (['light', 'dark', 'system'].includes(parsed.theme) && ['small', 'medium', 'large'].includes(parsed.fontSize)) {
+        return parsed;
+      }
     } catch {
       return { theme: 'dark', fontSize: 'medium' };
     }
