@@ -1,5 +1,4 @@
-'use client'; // <<< هذا هو السطر الوحيد الذي تمت إضافته
-
+'use client'; 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
