@@ -1,0 +1,553 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS Custom Properties for Theme System */
+:root {
+  /* Default Dark Theme Variables */
+  --bg-primary: #161616;
+  --bg-secondary: #054239;
+  --text-primary: #ffffff;
+  --text-secondary: #edebe0;
+  --primary: #988561;
+  --accent: #428177;
+  --border: #428177;
+  --input: #054239;
+  --card: #054239;
+  --app-bar: rgba(42, 129, 119, 0.15);
+  --shadow: rgba(0, 0, 0, 0.8);
+  --overlay: rgba(0, 0, 0, 0.6);
+  
+  /* Status Colors */
+  --color-online: #428177;
+  --color-offline: #3d3a3b;
+  --color-away: #FFA500;
+  --color-busy: #6b1f2a;
+  
+  /* Error, Warning, Success, Info */
+  --color-error: #6b1f2a;
+  --color-warning: #FFA500;
+  --color-success: #428177;
+  --color-info: #2196F3;
+}
+
+/* Light Theme Variables */
+.light {
+  --bg-primary: #edebe0;
+  --bg-secondary: #ffffff;
+  --text-primary: #161616;
+  --text-secondary: #054239;
+  --primary: #428177;
+  --accent: #988561;
+  --border: #b9a779;
+  --input: #ffffff;
+  --card: #ffffff;
+  --app-bar: rgba(237, 235, 224, 0.8);
+  --shadow: rgba(0, 0, 0, 0.1);
+  --overlay: rgba(0, 0, 0, 0.3);
+}
+
+/* Dark Theme Variables */
+.dark {
+  --bg-primary: #161616;
+  --bg-secondary: #054239;
+  --text-primary: #ffffff;
+  --text-secondary: #edebe0;
+  --primary: #988561;
+  --accent: #428177;
+  --border: #428177;
+  --input: #054239;
+  --card: #054239;
+  --app-bar: rgba(42, 129, 119, 0.15);
+  --shadow: rgba(0, 0, 0, 0.8);
+  --overlay: rgba(0, 0, 0, 0.6);
+}
+
+/* Theme Transition */
+* {
+  transition: 
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* Override Tailwind classes with CSS variables */
+.bg-background {
+  background-color: var(--bg-primary) !important;
+}
+
+.bg-surface {
+  background-color: var(--bg-secondary) !important;
+}
+
+.bg-primary {
+  background-color: var(--primary) !important;
+}
+
+.bg-accent {
+  background-color: var(--accent) !important;
+}
+
+.text-on-surface {
+  color: var(--text-primary) !important;
+}
+
+.text-on-surface-variant {
+  color: var(--text-secondary) !important;
+}
+
+.text-primary {
+  color: var(--primary) !important;
+}
+
+.text-accent {
+  color: var(--accent) !important;
+}
+
+.border-border {
+  border-color: var(--border) !important;
+}
+
+.bg-input {
+  background-color: var(--input) !important;
+}
+
+.bg-card {
+  background-color: var(--card) !important;
+}
+
+.bg-app-bar {
+  background-color: var(--app-bar) !important;
+}
+
+.shadow-lg {
+  box-shadow: 0 10px 25px var(--shadow) !important;
+}
+
+.shadow-md {
+  box-shadow: 0 4px 12px var(--shadow) !important;
+}
+
+.shadow-sm {
+  box-shadow: 0 1px 3px var(--shadow) !important;
+}
+
+/* Focus states */
+.focus\:ring-primary\/50:focus {
+  box-shadow: 0 0 0 3px rgba(var(--primary), 0.5) !important;
+}
+
+.focus\:border-primary:focus {
+  border-color: var(--primary) !important;
+}
+
+/* Hover states */
+.hover\:bg-surface\/30:hover {
+  background-color: rgba(var(--bg-secondary), 0.3) !important;
+}
+
+.hover\:bg-surface\/50:hover {
+  background-color: rgba(var(--bg-secondary), 0.5) !important;
+}
+
+.hover\:bg-primary\/10:hover {
+  background-color: rgba(var(--primary), 0.1) !important;
+}
+
+.hover\:bg-primary\/20:hover {
+  background-color: rgba(var(--primary), 0.2) !important;
+}
+
+.hover\:text-primary:hover {
+  color: var(--primary) !important;
+}
+
+/* Status colors */
+.text-error {
+  color: var(--color-error) !important;
+}
+
+.text-success {
+  color: var(--color-success) !important;
+}
+
+.text-warning {
+  color: var(--color-warning) !important;
+}
+
+.text-info {
+  color: var(--color-info) !important;
+}
+
+.bg-error {
+  background-color: var(--color-error) !important;
+}
+
+.bg-success {
+  background-color: var(--color-success) !important;
+}
+
+.bg-warning {
+  background-color: var(--color-warning) !important;
+}
+
+.bg-info {
+  background-color: var(--color-info) !important;
+}
+
+/* Force theme application */
+html {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+body {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Additional component overrides */
+.gradient-text {
+  color: var(--primary) !important;
+}
+
+.text-gradient {
+  background: linear-gradient(45deg, var(--primary), var(--accent)) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* Card and surface overrides */
+[class*="bg-surface"] {
+  background-color: var(--bg-secondary) !important;
+}
+
+[class*="bg-card"] {
+  background-color: var(--card) !important;
+}
+
+[class*="bg-input"] {
+  background-color: var(--input) !important;
+}
+
+[class*="bg-app-bar"] {
+  background-color: var(--app-bar) !important;
+}
+
+[class*="text-primary"] {
+  color: var(--primary) !important;
+}
+
+[class*="text-on-surface"] {
+  color: var(--text-primary) !important;
+}
+
+[class*="border-border"] {
+  border-color: var(--border) !important;
+}
+
+/* Override specific Tailwind classes more aggressively */
+.grid, .flex, .block, .inline-block, .inline-flex {
+  color: var(--text-primary) !important;
+}
+
+/* Responsive Design Enhancements */
+@media (max-width: 768px) {
+  .responsive-container {
+    padding: 1rem 0.5rem;
+  }
+  
+  .responsive-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .responsive-text {
+    font-size: 0.875rem;
+  }
+  
+  .responsive-spacing {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .responsive-container {
+    padding: 0.75rem 0.25rem;
+  }
+  
+  .responsive-text {
+    font-size: 0.75rem;
+  }
+  
+  .responsive-spacing {
+    gap: 0.75rem;
+  }
+  
+  .responsive-button {
+    padding: 0.5rem 0.75rem;
+  }
+}
+
+/* Slider Responsive Enhancements */
+@media (max-width: 640px) {
+  .slider-container {
+    padding: 0.5rem;
+  }
+  
+  .slider-label {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .thumb-small {
+    width: 14px !important;
+    height: 14px !important;
+  }
+  
+  .track-small {
+    height: 3px !important;
+  }
+}
+
+/* Enhanced Responsive Typography */
+@media (max-width: 768px) {
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.25rem; }
+  h3 { font-size: 1.125rem; }
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 1.25rem; }
+  h2 { font-size: 1.125rem; }
+  h3 { font-size: 1rem; }
+}
+
+/* Fonts are now handled by Next.js Fonts in layout.tsx */
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  font-family: 'Inter', 'Cairo', system-ui, sans-serif;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1C1C1E;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #988561;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8a744f;
+}
+
+/* RTL Support */
+[dir="rtl"] {
+  text-align: right;
+}
+
+[dir="rtl"] .ltr-only {
+  display: none;
+}
+
+[dir="ltr"] .rtl-only {
+  display: none;
+}
+
+/* Arabic text styling */
+.arabic-text {
+  font-family: 'Cairo', system-ui, sans-serif;
+  direction: rtl;
+  text-align: right;
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .5;
+  }
+}
+
+/* Glass morphism effect */
+.glass {
+  background: rgba(28, 28, 30, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Custom button styles */
+.btn-primary {
+  @apply bg-primary text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50;
+}
+
+.btn-secondary {
+  @apply bg-surface text-on-surface px-6 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-surface/80 focus:outline-none focus:ring-2 focus:ring-primary/50;
+}
+
+/* Input styles */
+.input-field {
+  @apply bg-input border border-border rounded-lg px-4 py-2 text-on-surface placeholder-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200;
+}
+
+/* Card styles */
+.card {
+  @apply bg-card border border-border rounded-lg p-4 shadow-sm;
+}
+
+/* Navigation styles */
+.nav-item {
+  @apply flex items-center justify-center p-2 rounded-lg transition-all duration-200 hover:bg-surface/50;
+}
+
+.nav-item.active {
+  @apply bg-primary/20 text-primary;
+}
+
+/* Message bubble styles */
+.message-bubble-sent {
+  @apply bg-primary text-white rounded-2xl rounded-br-md px-4 py-2 max-w-xs ml-auto;
+}
+
+.message-bubble-received {
+  @apply bg-surface text-on-surface rounded-2xl rounded-bl-md px-4 py-2 max-w-xs mr-auto;
+}
+
+/* Chat list item styles */
+.chat-item {
+  @apply flex items-center p-3 hover:bg-surface/50 transition-all duration-200 cursor-pointer;
+}
+
+.chat-item:hover {
+  @apply bg-surface/30;
+}
+
+/* Status indicator */
+.status-online {
+  @apply w-3 h-3 bg-green-500 rounded-full border-2 border-background;
+}
+
+.status-offline {
+  @apply w-3 h-3 bg-gray-400 rounded-full border-2 border-background;
+}
+
+/* Unread badge */
+.unread-badge {
+  @apply bg-primary text-white text-xs rounded-full px-2 py-1 min-w-[20px] text-center;
+}
+
+/* Tab styles */
+.tab {
+  @apply px-3 py-1 rounded-lg text-sm font-medium transition-all duration-200;
+}
+
+.tab.active {
+  @apply bg-surface text-primary;
+}
+
+.tab.inactive {
+  @apply text-on-surface-variant hover:text-on-surface;
+}
+
+/* Loading spinner */
+.spinner {
+  @apply animate-spin rounded-full h-6 w-6 border-b-2 border-primary;
+}
+
+/* Responsive utilities */
+@media (max-width: 640px) {
+  .mobile-hidden {
+    display: none;
+  }
+}
+
+@media (min-width: 641px) {
+  .desktop-hidden {
+    display: none;
+  }
+}
