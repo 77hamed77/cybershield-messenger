@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect } from 'react';
-import { initializeAppSettings } from '@/lib/theme-language';
-import { ThemeSettings } from '@/types'; // سنحتاج هذا النوع غالباً
+import { initializeAppSettings, applyTheme } from '@/lib/theme-language';
+import { ThemeSettings } from '@/types'; // الآن هذا الاستيراد يعمل بدون خطأ
 
-// تعريف الأنواع المسموح بها للثيم
+// تعريف الأنواع المسموح بها للثيم مرة أخرى هنا للتأكيد
 type Theme = 'light' | 'dark' | 'system';
 
 /**
@@ -12,40 +12,34 @@ type Theme = 'light' | 'dark' | 'system';
  */
 export default function AppInitializer() {
   useEffect(() => {
+    // يمكن الإبقاء على هذا السطر إذا كان يقوم بمهام أخرى
     initializeAppSettings();
     
-    // تطبيق إضافي للتأكد من تطبيق الثيم
     const timer = setTimeout(() => {
-      initializeAppSettings();
-      
-      // إضافة class للتطبيق على document
-      const root = document.documentElement;
-      root.classList.add('theme-applied');
-      
-      // <<< بداية الإصلاح
       // 1. نحصل على الثيم المحفوظ من الذاكرة أو نستخدم القيمة الافتراضية
       const savedTheme = localStorage.getItem('app-theme-current') || 'dark';
 
       // 2. نتأكد من أن القيمة المحفوظة هي واحدة من القيم المسموح بها
       const validThemes: Theme[] = ['light', 'dark', 'system'];
-      const finalTheme: Theme = validThemes.includes(savedTheme as Theme) ? (savedTheme as Theme) : 'dark';
+      const finalTheme: Theme = validThemes.includes(savedTheme as Theme) 
+        ? (savedTheme as Theme) 
+        : 'dark';
 
-      // 3. ننشئ كائن الإعدادات بالنوع الصحيح
+      // 3. ننشئ كائن الإعدادات بالنوع الصحيح والمطابق للقواعد
       const themeSettings: ThemeSettings = {
         theme: finalTheme,
-        fontSize: 'medium' // تأكد من أن 'medium' قيمة مقبولة في تعريف النوع
+        fontSize: localStorage.getItem('app-font-size') || '16px', // قمت بتحسين هذا أيضاً
       };
-      // <<< نهاية الإصلاح
       
-      if (typeof window !== 'undefined') {
-        import('@/lib/theme-language').then(({ applyTheme }) => {
-          // الآن نرسل الكائن الصحيح
-          applyTheme(themeSettings);
-        });
-      }
+      // 4. الآن نقوم بتطبيق الثيم، ولن يكون هناك أي خطأ
+      applyTheme(themeSettings);
+      
+      // إضافة class للتطبيق على document
+      document.documentElement.classList.add('theme-applied');
+
     }, 100);
 
-    // مهم: تنظيف الـ timer عند الخروج من المكون لمنع تسرب الذاكرة
+    // تنظيف الـ timer عند الخروج من المكون
     return () => clearTimeout(timer);
   }, []);
 

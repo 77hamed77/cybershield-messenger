@@ -91,3 +91,10 @@ export interface NavigationItem {
   route: string;
   active: boolean;
 }
+
+// <<< بداية الإضافة: هذا هو النوع الجديد الذي يحتاجه المشروع
+export interface ThemeSettings {
+  theme: 'light' | 'dark' | 'system';
+  fontSize: string;
+}
+// <<< نهاية الإضافة
