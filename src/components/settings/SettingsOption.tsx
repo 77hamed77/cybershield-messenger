@@ -2,17 +2,9 @@
 
 import { motion } from 'framer-motion';
 import { 
-  ChevronRight, 
-  Bookmark, 
-  Phone, 
-  Globe, 
-  Bell, 
-  Lock, 
-  HardDrive, 
-  Palette 
+  ChevronRight
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { SETTINGS_OPTIONS } from '@/lib/constants';
 
 /**
  * SettingsOption Component
@@ -26,10 +18,17 @@ import { SETTINGS_OPTIONS } from '@/lib/constants';
  * - Color-coded icons and labels
  */
 
-type SettingsOptionType = typeof SETTINGS_OPTIONS[number];
+interface SettingsOption {
+  id: string;
+  icon: React.ComponentType<{ size?: number }>;
+  label: string;
+  description: string;
+  color: string;
+  route: string;
+}
 
 interface SettingsOptionProps {
-  option: SettingsOptionType;
+  option: SettingsOption;
 }
 
 export default function SettingsOption({ option }: SettingsOptionProps) {
@@ -41,27 +40,8 @@ export default function SettingsOption({ option }: SettingsOptionProps) {
   };
 
   // Function to get the appropriate icon component
-  const getIconComponent = (iconName: string) => {
-    const iconProps = { size: 20 };
-    
-    switch (iconName) {
-      case 'Bookmark':
-        return <Bookmark {...iconProps} />;
-      case 'Phone':
-        return <Phone {...iconProps} />;
-      case 'Globe':
-        return <Globe {...iconProps} />;
-      case 'Bell':
-        return <Bell {...iconProps} />;
-      case 'Lock':
-        return <Lock {...iconProps} />;
-      case 'HardDrive':
-        return <HardDrive {...iconProps} />;
-      case 'Palette':
-        return <Palette {...iconProps} />;
-      default:
-        return <Bookmark {...iconProps} />;
-    }
+  const getIconComponent = (IconComponent: React.ComponentType<{ size?: number }>) => {
+    return <IconComponent size={20} />;
   };
 
   return (
@@ -82,8 +62,8 @@ export default function SettingsOption({ option }: SettingsOptionProps) {
             </div>
           </div>
           <div className="flex flex-col">
-            <span className="text-on-surface font-medium">{option.label}</span>
-            <span className="text-on-surface-variant text-sm">{option.description}</span>
+            <span className="text-on-surface font-medium professional-body">{option.label}</span>
+            <span className="text-on-surface-variant text-sm professional-body">{option.description}</span>
           </div>
         </div>
         <ChevronRight size={20} className="text-on-surface-variant" />

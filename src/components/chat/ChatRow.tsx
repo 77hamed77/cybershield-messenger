@@ -1,26 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Pin, 
-  PinOff, 
   Archive, 
-  ArchiveRestore, 
   VolumeX, 
-  Volume2, 
-  Trash2, 
   MoreVertical,
   Check,
   CheckCheck,
-  FolderPlus,
   X,
   Folder,
   Plus
 } from 'lucide-react';
 import Image from 'next/image';
 import { ChatItem } from '@/types';
-import { formatTime } from '@/lib/utils';
+// import { formatTime } from '@/lib/utils';
+import ChatOptionsMenu from './ChatOptionsMenu';
 
 interface ChatRowProps {
   chat: ChatItem;
@@ -35,6 +31,7 @@ interface ChatRowProps {
   folders?: Array<{ id: string; name: string; icon: string; color: string; chatIds: string[] }>;
   currentFolderId?: string;
   onAddFolder?: () => void;
+  onStar?: () => void;
 }
 
 export default function ChatRow({ 
@@ -43,17 +40,19 @@ export default function ChatRow({
   onArchive, 
   onMute, 
   onDelete, 
-  onMarkUnread,
+  onMarkUnread: _onMarkUnread,
   onClick,
   onMoveToFolder,
   onRemoveFromFolder,
   folders = [],
   currentFolderId,
-  onAddFolder
+  onAddFolder,
+  onStar
 }: ChatRowProps) {
   const [showActions, setShowActions] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showFolderModal, setShowFolderModal] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const handleDelete = () => {
     setShowDeleteConfirm(true);
@@ -64,29 +63,47 @@ export default function ChatRow({
     setShowDeleteConfirm(false);
   };
 
+  // إغلاق القائمة عند النقر خارجها
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowActions(false);
+      }
+    };
+
+    if (showActions) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showActions]);
+
   return (
     <>
       <motion.div
+        ref={menuRef}
         className="relative group"
         whileHover={{ scale: 1.01 }}
         transition={{ duration: 0.2 }}
       >
         <div 
-          className="flex items-center p-4 hover:bg-surface/30 transition-colors cursor-pointer"
+          className="flex items-center p-3 md:p-4 hover:bg-surface/30 transition-colors cursor-pointer"
           onClick={onClick}
         >
           {/* Avatar */}
-          <div className="relative mr-3">
+          <div className="relative mr-2 md:mr-3">
             <Image
               src={chat.avatarUrl}
               alt={chat.title}
-              width={52}
-              height={52}
-              className="rounded-full object-cover"
+              width={48}
+              height={48}
+              className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover"
             />
             {chat.pinned && (
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full flex items-center justify-center">
-                <Pin size={10} className="text-white" />
+              <div className="absolute -top-1 -right-1 w-3 h-3 md:w-4 md:h-4 bg-primary rounded-full flex items-center justify-center">
+                <Pin size={8} className="md:w-2.5 md:h-2.5 text-white" />
               </div>
             )}
           </div>
@@ -94,17 +111,17 @@ export default function ChatRow({
           {/* Content */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between mb-1">
-              <h3 className={`font-semibold text-sm truncate ${
+              <h3 className={`font-semibold text-xs md:text-sm truncate ${
                 chat.isRead ? 'text-on-surface' : 'text-primary'
               }`}>
                 {chat.title}
               </h3>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1 md:space-x-2">
                 {chat.isMuted && (
-                  <VolumeX size={16} className="text-on-surface-variant" />
+                  <VolumeX size={14} className="md:w-4 md:h-4 text-on-surface-variant" />
                 )}
                 {chat.isArchived && (
-                  <Archive size={16} className="text-on-surface-variant" />
+                  <Archive size={14} className="md:w-4 md:h-4 text-on-surface-variant" />
                 )}
                 <span className="text-xs text-on-surface-variant">
                   {chat.time}
@@ -113,20 +130,20 @@ export default function ChatRow({
             </div>
             
             <div className="flex items-center justify-between">
-              <p className="text-sm text-on-surface-variant truncate flex-1">
+              <p className="text-xs md:text-sm text-on-surface-variant truncate flex-1">
                 {chat.subtitle}
               </p>
-              <div className="flex items-center space-x-2 ml-2">
+              <div className="flex items-center space-x-1 md:space-x-2 ml-1 md:ml-2">
                 {chat.unreadCount > 0 ? (
-                  <div className="bg-primary text-white text-xs rounded-full px-2 py-1 min-w-[20px] text-center">
+                  <div className="bg-primary text-white text-xs rounded-full px-1.5 md:px-2 py-0.5 md:py-1 min-w-[18px] md:min-w-[20px] text-center">
                     {chat.unreadCount > 99 ? '99+' : chat.unreadCount}
                   </div>
                 ) : (
                   <div className="flex items-center">
                     {chat.isRead ? (
-                      <CheckCheck size={16} className="text-blue-500" />
+                      <CheckCheck size={14} className="md:w-4 md:h-4 text-blue-500" />
                     ) : (
-                      <Check size={16} className="text-on-surface-variant" />
+                      <Check size={14} className="md:w-4 md:h-4 text-on-surface-variant" />
                     )}
                   </div>
                 )}
@@ -140,112 +157,75 @@ export default function ChatRow({
               e.stopPropagation(); // منع انتشار الحدث إلى العنصر الأب
               setShowActions(!showActions);
             }}
-            className="opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-surface/50 rounded-full"
+            className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 md:p-2 hover:bg-surface/50 rounded-full"
           >
-            <MoreVertical size={20} className="text-on-surface-variant" />
+            <MoreVertical size={18} className="md:w-5 md:h-5 text-on-surface-variant" />
           </button>
         </div>
 
-        {/* Actions Menu */}
+        {/* Chat Options Menu */}
         {showActions && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="absolute right-4 top-16 bg-surface border border-border rounded-lg shadow-lg z-10 min-w-[200px]"
-          >
-            <div className="py-2">
-              <button
-                onClick={onPin}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-surface/50 flex items-center space-x-3"
-              >
-                {chat.pinned ? (
-                  <>
-                    <PinOff size={16} className="text-on-surface-variant" />
-                    <span>Unpin</span>
-                  </>
-                ) : (
-                  <>
-                    <Pin size={16} className="text-on-surface-variant" />
-                    <span>Pin</span>
-                  </>
-                )}
-              </button>
-              
-              <button
-                onClick={onMarkUnread}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-surface/50 flex items-center space-x-3"
-              >
-                <Check size={16} className="text-on-surface-variant" />
-                <span>Mark as Unread</span>
-              </button>
-              
-              <button
-                onClick={onMute}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-surface/50 flex items-center space-x-3"
-              >
-                {chat.isMuted ? (
-                  <>
-                    <Volume2 size={16} className="text-on-surface-variant" />
-                    <span>Unmute</span>
-                  </>
-                ) : (
-                  <>
-                    <VolumeX size={16} className="text-on-surface-variant" />
-                    <span>Mute</span>
-                  </>
-                )}
-              </button>
-              
-              <button
-                onClick={onArchive}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-surface/50 flex items-center space-x-3"
-              >
-                {chat.isArchived ? (
-                  <>
-                    <ArchiveRestore size={16} className="text-on-surface-variant" />
-                    <span>Unarchive</span>
-                  </>
-                ) : (
-                  <>
-                    <Archive size={16} className="text-on-surface-variant" />
-                    <span>Archive</span>
-                  </>
-                )}
-              </button>
-              
-              <div className="border-t border-border my-1"></div>
-              
-              {/* Move to Folder Option */}
-              <button
-                onClick={() => setShowFolderModal(true)}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-surface/50 flex items-center space-x-3"
-              >
-                <FolderPlus size={16} className="text-on-surface-variant" />
-                <span>Move to Folder</span>
-              </button>
-              
-              <div className="border-t border-border my-1"></div>
-              
-              <button
-                onClick={handleDelete}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-surface/50 flex items-center space-x-3 text-error"
-              >
-                <Trash2 size={16} />
-                <span>Delete</span>
-              </button>
-            </div>
-          </motion.div>
+          <div className="absolute top-0 right-0 z-50">
+            <ChatOptionsMenu
+              chat={{
+                id: chat.id,
+                title: chat.title,
+                isPinned: chat.pinned || false,
+                isArchived: chat.isArchived,
+                isMuted: chat.isMuted,
+                isStarred: chat.isStarred || false
+              }}
+              onPin={onPin}
+              onArchive={onArchive}
+              onMute={onMute || (() => {})}
+              onStar={onStar || (() => {})}
+              onDelete={handleDelete}
+              onClose={() => setShowActions(false)}
+              onMoveToFolder={() => {
+                setShowActions(false);
+                setShowFolderModal(true);
+              }}
+            />
+          </div>
         )}
       </motion.div>
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div 
+          className="bg-black/70 backdrop-blur-lg"
+          onClick={() => setShowDeleteConfirm(false)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: '100vw',
+            height: '100vh',
+            zIndex: 9998,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+            margin: 0
+          }}
+        >
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-surface border border-border rounded-lg p-6 max-w-sm mx-4"
+            initial={{ opacity: 0, scale: 0.8, y: 30 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 30 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="bg-surface border border-border rounded-3xl p-6 shadow-2xl backdrop-blur-sm"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: 'relative',
+              zIndex: 9999,
+              maxHeight: '75vh',
+              maxWidth: '90vw',
+              width: '100%',
+              overflowY: 'auto'
+            }}
           >
             <h3 className="text-lg font-semibold text-on-surface mb-2">
               تأكيد الحذف
@@ -273,12 +253,40 @@ export default function ChatRow({
 
       {/* Folder Selection Modal */}
       {showFolderModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div 
+          className="bg-black/60 backdrop-blur-md"
+          onClick={() => setShowFolderModal(false)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: '100vw',
+            height: '100vh',
+            zIndex: 9997,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+            margin: 0
+          }}
+        >
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="bg-surface border border-border rounded-xl shadow-xl w-full max-w-md"
+            initial={{ opacity: 0, scale: 0.8, y: 30 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 30 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="bg-surface border border-border rounded-3xl shadow-2xl backdrop-blur-sm"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: 'relative',
+              zIndex: 9998,
+              maxHeight: '75vh',
+              maxWidth: '90vw',
+              width: '100%',
+              overflowY: 'auto'
+            }}
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-border">

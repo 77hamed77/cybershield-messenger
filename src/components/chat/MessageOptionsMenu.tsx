@@ -1,3 +1,4 @@
+//صفحة الخيارات المتعلقة بالرسالة
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -69,6 +70,8 @@ export default function MessageOptionsMenu({
 
   const handleSave = () => {
     onSave(messageId);
+    // الانتقال لصفحة المحفوظات
+    router.push('/main/settings/saved-messages');
     onClose();
   };
 
@@ -82,6 +85,39 @@ export default function MessageOptionsMenu({
   const handleSendToSaved = () => {
     onSave(messageId);
     router.push('/main/settings/saved-messages');
+    onClose();
+  };
+
+  // وظائف الأزرار الجديدة
+  const handleForward = () => {
+    if (onForward) {
+      onForward(messageId);
+    }
+    onClose();
+  };
+
+  const handleReply = () => {
+    if (onReply) {
+      onReply(messageId);
+    }
+    onClose();
+  };
+
+  const handleEdit = () => {
+    if (onEdit) {
+      onEdit(messageId);
+    }
+    onClose();
+  };
+
+  const handleDownload = () => {
+    // إنشاء رابط تحميل للملف
+    const link = document.createElement('a');
+    link.href = messageContent;
+    link.download = `message_${messageId}_${Date.now()}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
     onClose();
   };
 
@@ -104,29 +140,29 @@ export default function MessageOptionsMenu({
       id: 'forward',
       label: 'إعادة توجيه',
       icon: Forward,
-      onClick: () => onForward ? onForward(messageId) : null,
+      onClick: handleForward,
       show: !!onForward
     },
     {
       id: 'reply',
       label: 'الرد',
       icon: Reply,
-      onClick: () => onReply ? onReply(messageId) : null,
+      onClick: handleReply,
       show: !!onReply
     },
     {
       id: 'edit',
       label: 'تعديل',
       icon: Edit,
-      onClick: () => onEdit ? onEdit(messageId) : null,
+      onClick: handleEdit,
       show: isSentByMe && !!onEdit
     },
     {
       id: 'download',
       label: 'تحميل',
       icon: Download,
-      onClick: () => console.log('Download message'),
-      show: messageContent.startsWith('/') && messageContent.match(/\.(jpg|jpeg|png|gif|mp4|mp3|pdf)$/i)
+      onClick: handleDownload,
+      show: messageContent.startsWith('/') || messageContent.startsWith('blob:') || messageContent.match(/\.(jpg|jpeg|png|gif|mp4|mp3|pdf|doc|docx)$/i)
     },
     {
       id: 'delete',
@@ -143,6 +179,7 @@ export default function MessageOptionsMenu({
       {/* Background Overlay */}
       <AnimatePresence>
         <motion.div
+          key="overlay"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -152,6 +189,7 @@ export default function MessageOptionsMenu({
 
         {/* Menu */}
         <motion.div
+          key="menu"
           ref={menuRef}
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -204,6 +242,7 @@ export default function MessageOptionsMenu({
       {/* Delete Confirmation */}
       {showConfirmation && (
         <motion.div
+          key="delete-confirmation"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

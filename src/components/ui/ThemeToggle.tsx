@@ -3,9 +3,8 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sun, Moon, Monitor } from 'lucide-react';
-// الأسطر الصحيحة
-import { applyTheme, loadThemeSettings, saveThemeSettings } from '@/lib/theme-language';
-import type { ThemeSettings } from '@/types';
+import { applyTheme, loadThemeSettings, saveThemeSettings, ThemeSettings } from '@/lib/theme-language';
+
 interface ThemeToggleProps {
   className?: string;
   size?: 'sm' | 'md' | 'lg';

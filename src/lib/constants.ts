@@ -38,9 +38,9 @@ export const THEMES = {
       primaryVariant: COLOR_PALETTE.golden.secondary,
       
       // Background colors
-      background: COLOR_PALETTE.charcoal.dark,
-      surface: COLOR_PALETTE.forest.secondary,
-      surfaceVariant: COLOR_PALETTE.forest.primary,
+      background: '#161616',
+      surface: '#1a1a1a',
+      surfaceVariant: '#2a2a2a',
       
       // Text colors
       onBackground: COLOR_PALETTE.charcoal.white,

@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { applyTheme, loadThemeSettings, saveThemeSettings } from '@/lib/theme-language';
-import { ThemeSettings } from '@/types';import Slider from '@/components/ui/Slider';
+import { applyTheme, loadThemeSettings, saveThemeSettings, ThemeSettings } from '@/lib/theme-language';
+import Slider from '@/components/ui/Slider';
 import { motion } from 'framer-motion';
 
 export default function AppearancePage() {

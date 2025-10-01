@@ -7,14 +7,33 @@ interface NoSSRProps {
   fallback?: React.ReactNode;
 }
 
+/**
+ * مكون لتجنب Server-Side Rendering وتجنب hydration mismatch
+ * يُستخدم للمكونات التي تحتوي على بيانات ديناميكية أو localStorage
+ */
 export default function NoSSR({ children, fallback = null }: NoSSRProps) {
-  const [isMounted, setIsMounted] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
+    setIsClient(true);
   }, []);
 
-  if (!isMounted) {
+  if (!isClient) {
+    return <>{fallback}</>;
+  }
+
+  return <>{children}</>;
+}
+
+// مكون محسن لتجنب مشاكل hydration
+export function ClientOnly({ children, fallback = null }: NoSSRProps) {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
     return <>{fallback}</>;
   }
 

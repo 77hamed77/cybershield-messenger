@@ -9,10 +9,8 @@ const nextConfig: NextConfig = {
     domains: ['localhost'],
     formats: ['image/webp', 'image/avif'],
   },
-  i18n: {
-    locales: ['ar', 'en'],
-    defaultLocale: 'ar',
-    localeDetection: false,
+  eslint: {
+    ignoreDuringBuilds: true, // ← هذا السطر الجديد لتعطيل فحص ESLint أثناء البناء
   },
   async headers() {
     return [
@@ -35,13 +33,6 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-
-  // <<< بداية الإضافة: هذا هو الجزء الذي تمت إضافته
-  // هذا الإعداد يسمح بنجاح عملية البناء حتى لو كان المشروع يحتوي على أخطاء ESLint
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  // <<< نهاية الإضافة
 };
 
 export default nextConfig;

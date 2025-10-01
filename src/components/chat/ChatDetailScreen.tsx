@@ -28,6 +28,7 @@ import VideoCallScreen from '@/components/calls/VideoCallScreen';
 import VoiceCallScreen from '@/components/calls/VoiceCallScreen';
 import ChatOptionsMenu from './ChatOptionsMenu';
 import MessageOptionsMenu from './MessageOptionsMenu';
+import { useLanguage } from '@/components/LanguageProvider';
 
 interface ChatDetailScreenProps {
   chatId: string;
@@ -53,6 +54,13 @@ export default function ChatDetailScreen({
   const [messageMenuPosition, setMessageMenuPosition] = useState({ x: 0, y: 0 });
   const [showMessageOptions, setShowMessageOptions] = useState(false);
   const [savedMessages, setSavedMessages] = useState<Set<string>>(new Set());
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const [showMediaPicker, setShowMediaPicker] = useState(false);
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
+  const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
+  const [isTyping, setIsTyping] = useState(false);
+  const { t, isRTL } = useLanguage();
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
@@ -139,12 +147,26 @@ export default function ChatDetailScreen({
     setSavedMessages(prev => new Set([...prev, messageId]));
     console.log('Message saved:', messageId);
     
-    // يمكن هنا حفظ الرسالة في قاعدة بيانات أو localStorage
+    // حفظ الرسالة في localStorage
     const message = messages.find(msg => msg.id === messageId);
     if (message) {
-      const savedMessagesFromStorage = JSON.parse(localStorage.getItem('savedMessages') || '[]');
-      savedMessagesFromStorage.push(message);
-      localStorage.setItem('savedMessages', JSON.stringify(savedMessagesFromStorage));
+      try {
+        const savedMessagesFromStorage = JSON.parse(localStorage.getItem('savedMessages') || '[]');
+        
+        // تجنب التكرار
+        const existingIndex = savedMessagesFromStorage.findIndex((msg: Message) => msg.id === messageId);
+        if (existingIndex === -1) {
+          savedMessagesFromStorage.push(message);
+          localStorage.setItem('savedMessages', JSON.stringify(savedMessagesFromStorage));
+          
+          // إشعار المستخدم
+          console.log('تم حفظ الرسالة بنجاح');
+        } else {
+          console.log('الرسالة محفوظة مسبقاً');
+        }
+      } catch (error) {
+        console.error('خطأ في حفظ الرسالة:', error);
+      }
     }
   };
 
@@ -156,23 +178,197 @@ export default function ChatDetailScreen({
   const handleReplyToMessage = (messageId: string) => {
     const message = messages.find(msg => msg.id === messageId);
     if (message) {
-      setNewMessage(`بالرد على: ${message.content} `);
-      // يمكن إضافة تأثير بصري للرد
+      // إضافة الرد مع تنسيق جميل
+      const replyPrefix = message.type === MessageType.TEXT 
+        ? `بالرد على: "${message.content}" ` 
+        : `بالرد على: ${message.type === MessageType.IMAGE ? 'صورة' : message.type === MessageType.VIDEO ? 'فيديو' : message.type === MessageType.AUDIO ? 'رسالة صوتية' : 'ملف'} `;
+      
+      setNewMessage(replyPrefix);
+      
+      // التركيز على حقل الإدخال
+      setTimeout(() => {
+        const input = document.querySelector('input[type="text"]') as HTMLInputElement;
+        input?.focus();
+        input?.setSelectionRange(input.value.length, input.value.length);
+      }, 100);
     }
   };
 
   const handleForwardMessage = (messageId: string) => {
-    console.log('Forward message:', messageId);
-    // يمكن فتح قائمة جهات الاتصال لإعادة التوجيه
+    const message = messages.find(msg => msg.id === messageId);
+    if (message) {
+      // محاكاة إعادة التوجيه (في التطبيق الحقيقي سيفتح قائمة جهات الاتصال)
+      const forwardMessage: Message = {
+        ...message,
+        id: Date.now().toString(),
+        content: `[مُعاد توجيهه] ${message.content}`,
+        time: new Date().toLocaleTimeString('en-US', { 
+          hour: '2-digit', 
+          minute: '2-digit',
+          hour12: false 
+        })
+      };
+      
+      setMessages([forwardMessage, ...messages]);
+      console.log('Message forwarded:', messageId);
+    }
   };
 
   const handleEditMessage = (messageId: string) => {
     const message = messages.find(msg => msg.id === messageId);
-    if (message) {
-      setNewMessage(message.content);
+    if (message && message.type === MessageType.TEXT) {
+      // إضافة بادئة التعديل
+      setNewMessage(`[تعديل] ${message.content}`);
+      
+      // التركيز على حقل الإدخال
+      setTimeout(() => {
+        const input = document.querySelector('input[type="text"]') as HTMLInputElement;
+        input?.focus();
+        input?.setSelectionRange(input.value.length, input.value.length);
+      }, 100);
+      
       // حذف الرسالة الأصلية من القائمة
       setMessages(prev => prev.filter(msg => msg.id !== messageId));
     }
+  };
+
+  // وظائف إرسال الرسائل الصوتية
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      const chunks: Blob[] = [];
+
+      recorder.ondataavailable = (event) => {
+        chunks.push(event.data);
+      };
+
+      recorder.onstop = () => {
+        const audioBlob = new Blob(chunks, { type: 'audio/wav' });
+        sendVoiceMessage(audioBlob);
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      recorder.start();
+      setMediaRecorder(recorder);
+      setAudioChunks(chunks);
+      setIsRecording(true);
+      setRecordingTime(0);
+
+      // عداد الوقت
+      const timer = setInterval(() => {
+        setRecordingTime(prev => prev + 1);
+      }, 1000);
+
+      // إيقاف التسجيل تلقائياً بعد 60 ثانية
+      setTimeout(() => {
+        stopRecording();
+        clearInterval(timer);
+      }, 60000);
+
+    } catch (error) {
+      console.error('Error starting recording:', error);
+      alert('لا يمكن الوصول للميكروفون. تأكد من السماح بالوصول للميكروفون.');
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorder && isRecording) {
+      mediaRecorder.stop();
+      setIsRecording(false);
+    }
+  };
+
+  const sendVoiceMessage = (audioBlob: Blob) => {
+    const audioUrl = URL.createObjectURL(audioBlob);
+    const message: Message = {
+      id: Date.now().toString(),
+      content: audioUrl,
+      isSentByMe: true,
+      time: new Date().toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: false 
+      }),
+      isRead: false,
+      type: MessageType.AUDIO,
+      chatId
+    };
+    setMessages([message, ...messages]);
+  };
+
+  // وظائف إرسال الوسائط
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const fileUrl = URL.createObjectURL(file);
+      let messageType = MessageType.TEXT;
+
+      if (file.type.startsWith('image/')) {
+        messageType = MessageType.IMAGE;
+      } else if (file.type.startsWith('video/')) {
+        messageType = MessageType.VIDEO;
+      } else if (file.type.startsWith('audio/')) {
+        messageType = MessageType.AUDIO;
+      }
+
+      const message: Message = {
+        id: Date.now().toString(),
+        content: fileUrl,
+        isSentByMe: true,
+        time: new Date().toLocaleTimeString('en-US', { 
+          hour: '2-digit', 
+          minute: '2-digit',
+          hour12: false 
+        }),
+        isRead: false,
+        type: messageType,
+        chatId
+      };
+      setMessages([message, ...messages]);
+    }
+  };
+
+  // وظيفة محاكاة الكتابة
+  const handleTyping = () => {
+    setIsTyping(true);
+    setTimeout(() => setIsTyping(false), 2000);
+  };
+
+  // وظيفة التحقق من صحة الرابط
+  const isValidUrl = (url: string): boolean => {
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  // وظيفة الحصول على رابط آمن للعرض
+  const getSafeUrl = (content: string, type: MessageType): string => {
+    // إذا كان الرابط صالح، استخدمه
+    if (isValidUrl(content)) {
+      return content;
+    }
+    
+    // إذا كان blob URL، استخدمه
+    if (content.startsWith('blob:')) {
+      return content;
+    }
+    
+    // إذا كان مسار نسبي، أضف / في البداية
+    if (content.startsWith('/')) {
+      return content;
+    }
+    
+    // إذا كان مسار ملف محلي، أضف / في البداية
+    if (content.match(/\.(jpg|jpeg|png|gif|mp4|mp3|pdf|doc|docx)$/i)) {
+      return `/${content}`;
+    }
+    
+    // في الحالات الأخرى، استخدم placeholder
+    return '/images/logo.png';
   };
 
   // تأثير حركة الخلفية الخفيفة مع التمرير
@@ -236,7 +432,9 @@ export default function ChatDetailScreen({
             />
             <div>
               <h2 className="font-semibold text-on-surface">{title}</h2>
-              <p className="text-xs text-on-surface-variant">last seen just now</p>
+              <p className="text-xs text-on-surface-variant">
+                {isTyping ? 'يكتب...' : 'last seen just now'}
+              </p>
             </div>
           </div>
           <div className="flex items-center space-x-2">
@@ -302,12 +500,40 @@ export default function ChatDetailScreen({
                 <p className="text-sm">{message.content}</p>
               ) : message.type === MessageType.IMAGE ? (
                 <Image
-                  src={message.content}
+                  src={getSafeUrl(message.content, message.type)}
                   alt="Message image"
                   width={150}
                   height={150}
                   className="rounded-lg object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = '/images/logo.png';
+                  }}
                 />
+              ) : message.type === MessageType.VIDEO ? (
+                <video
+                  src={getSafeUrl(message.content, message.type)}
+                  controls
+                  className="rounded-lg max-w-xs"
+                  style={{ maxHeight: '200px' }}
+                  onError={(e) => {
+                    const target = e.target as HTMLVideoElement;
+                    target.style.display = 'none';
+                  }}
+                />
+              ) : message.type === MessageType.AUDIO ? (
+                <div className="flex items-center space-x-2 p-2 bg-surface/50 rounded-lg">
+                  <audio
+                    src={getSafeUrl(message.content, message.type)}
+                    controls
+                    className="flex-1"
+                    onError={(e) => {
+                      const target = e.target as HTMLAudioElement;
+                      target.style.display = 'none';
+                    }}
+                  />
+                  <span className="text-xs text-on-surface-variant">🎵</span>
+                </div>
               ) : null}
               
               <div className={`flex items-center justify-between mt-1 ${
@@ -344,32 +570,87 @@ export default function ChatDetailScreen({
 
       {/* Input */}
       <div className="bg-app-bar backdrop-blur-sm border-t border-border p-4 relative z-10">
+        {/* Recording Indicator */}
+        {isRecording && (
+          <div className="absolute top-0 left-0 right-0 bg-error/20 text-error text-center py-1 text-sm font-medium animate-pulse">
+            🎤 تسجيل رسالة صوتية... {recordingTime}s
+          </div>
+        )}
         <div className="flex items-center space-x-3">
-          {/* Attach file button - functionality to be implemented */}
-          <button 
-            className="p-2 hover:bg-surface/50 rounded-full transition-colors"
-            onClick={() => console.log('Attach file clicked')}
-            title="Attach file"
-          >
-            <Paperclip size={20} className="text-primary" />
-          </button>
+          {/* Attach file button */}
+          <div className="relative">
+            <button 
+              className="p-2 hover:bg-surface/50 rounded-full transition-colors"
+              onClick={() => setShowMediaPicker(!showMediaPicker)}
+              title="إرفاق ملف"
+            >
+              <Paperclip size={20} className="text-primary" />
+            </button>
+            
+            {/* Media Picker Dropdown */}
+            {showMediaPicker && (
+              <div className="absolute bottom-full left-0 mb-2 bg-surface border border-border rounded-lg shadow-lg p-2 min-w-[200px] z-20">
+                <input
+                  type="file"
+                  accept="image/*,video/*,audio/*"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                  id="media-upload"
+                />
+                <label
+                  htmlFor="media-upload"
+                  className="flex items-center space-x-2 px-3 py-2 hover:bg-surface-variant/50 rounded cursor-pointer"
+                >
+                  <Paperclip size={16} />
+                  <span className="text-sm">إرفاق ملف</span>
+                </label>
+                <button
+                  onClick={() => {
+                    setShowMediaPicker(false);
+                    document.getElementById('media-upload')?.click();
+                  }}
+                  className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-surface-variant/50 rounded text-left"
+                >
+                  <span className="text-sm">📷 صورة</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setShowMediaPicker(false);
+                    document.getElementById('media-upload')?.click();
+                  }}
+                  className="w-full flex items-center space-x-2 px-3 py-2 hover:bg-surface-variant/50 rounded text-left"
+                >
+                  <span className="text-sm">🎥 فيديو</span>
+                </button>
+              </div>
+            )}
+          </div>
           <div className="flex-1">
             <input
               type="text"
               value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
+              onChange={(e) => {
+                setNewMessage(e.target.value);
+                handleTyping();
+              }}
               onKeyPress={handleKeyPress}
-              placeholder="اكتب رسالتك..."
+              placeholder={t('chatDetail.typeMessage')}
               className="w-full px-4 py-2 bg-input border border-border rounded-2xl text-on-surface placeholder-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200"
             />
           </div>
-          {/* Voice message button - functionality to be implemented */}
+          {/* Voice message button */}
           <button 
-            className="p-2 hover:bg-surface/50 rounded-full transition-colors"
-            onClick={() => console.log('Voice message clicked')}
-            title="Send voice message"
+            className={`p-2 rounded-full transition-colors ${
+              isRecording 
+                ? 'bg-error/20 text-error animate-pulse' 
+                : 'hover:bg-surface/50 text-primary'
+            }`}
+            onMouseDown={startRecording}
+            onMouseUp={stopRecording}
+            onMouseLeave={stopRecording}
+            title={isRecording ? `${t('chatDetail.recording')} ${recordingTime}s` : t('chatDetail.voiceMessage')}
           >
-            <Mic size={20} className="text-primary" />
+            <Mic size={20} />
           </button>
           <button
             onClick={handleSendMessage}

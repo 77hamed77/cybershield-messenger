@@ -23,6 +23,7 @@ export interface ChatItem {
   isRead: boolean;
   isMuted: boolean;
   isArchived: boolean;
+  isStarred?: boolean;
   lastMessage?: Message;
 }
 
@@ -91,10 +92,3 @@ export interface NavigationItem {
   route: string;
   active: boolean;
 }
-
-// <<< بداية التعديل: تم تغيير 'string' إلى القيم الصحيحة
-export interface ThemeSettings {
-  theme: 'light' | 'dark' | 'system';
-  fontSize: 'small' | 'medium' | 'large';
-}
-// <<< نهاية التعديل

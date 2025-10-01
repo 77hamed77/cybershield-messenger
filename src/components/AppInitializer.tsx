@@ -1,55 +1,46 @@
 'use client';
 
 import { useEffect } from 'react';
-import { initializeAppSettings, applyTheme } from '@/lib/theme-language';
-import { ThemeSettings } from '@/types';
-
-// تعريف الأنواع المسموح بها للتأكيد
-type Theme = 'light' | 'dark' | 'system';
-type FontSize = 'small' | 'medium' | 'large';
+import { ClientOnly } from '@/components/ui/NoSSR';
 
 /**
  * مكون لتهيئة الإعدادات العامة للتطبيق عند البدء
  */
-export default function AppInitializer() {
+function AppInitializerContent() {
   useEffect(() => {
-    // يمكن الإبقاء على هذا السطر إذا كان يقوم بمهام أخرى
-    initializeAppSettings();
-    
-    const timer = setTimeout(() => {
-      // 1. التعامل مع الثيم
-      const savedTheme = localStorage.getItem('app-theme-current') || 'dark';
-      const validThemes: Theme[] = ['light', 'dark', 'system'];
-      const finalTheme: Theme = validThemes.includes(savedTheme as Theme) 
-        ? (savedTheme as Theme) 
-        : 'dark';
+    // تطبيق إعدادات الثيم بعد hydration
+    if (typeof window !== 'undefined') {
+      // تأخير قصير لضمان اكتمال hydration
+      const timer = setTimeout(() => {
+        const savedTheme = localStorage.getItem('app-theme') || 'dark';
+        const html = document.documentElement;
+        
+        // التحقق من الثيم الحالي قبل التعديل
+        const currentTheme = html.classList.contains('light') ? 'light' : 'dark';
+        
+        // تطبيق الثيم فقط إذا كان مختلفاً
+        if (currentTheme !== savedTheme) {
+          html.classList.remove('dark', 'light');
+          html.classList.add(savedTheme as 'dark' | 'light');
+        }
+        
+        // تطبيق إعدادات الثيم
+        import('@/lib/languages').then(({ applyTheme }) => {
+          applyTheme(savedTheme as 'dark' | 'light');
+        });
+      }, 100);
 
-      // <<< بداية التعديل: التعامل الصحيح مع حجم الخط
-      // 2. التعامل مع حجم الخط
-      const savedFontSize = localStorage.getItem('app-font-size');
-      const validFontSizes: FontSize[] = ['small', 'medium', 'large'];
-      const finalFontSize: FontSize = validFontSizes.includes(savedFontSize as FontSize) 
-        ? (savedFontSize as FontSize) 
-        : 'medium'; // القيمة الافتراضية هي 'medium'
-      // <<< نهاية التعديل
-
-      // 3. إنشاء كائن الإعدادات الصحيح بالكامل
-      const themeSettings: ThemeSettings = {
-        theme: finalTheme,
-        fontSize: finalFontSize, // استخدام القيمة الصحيحة والمتحقق منها
-      };
-      
-      // 4. الآن نقوم بتطبيق الثيم، ولن يكون هناك أي خطأ
-      applyTheme(themeSettings);
-      
-      // إضافة class للتطبيق على document
-      document.documentElement.classList.add('theme-applied');
-
-    }, 100);
-
-    // تنظيف الـ timer عند الخروج من المكون
-    return () => clearTimeout(timer);
+      return () => clearTimeout(timer);
+    }
   }, []);
 
-  return null; // لا يظهر أي شيء في الواجهة
+  return null;
+}
+
+export default function AppInitializer() {
+  return (
+    <ClientOnly>
+      <AppInitializerContent />
+    </ClientOnly>
+  );
 }

@@ -13,7 +13,7 @@ export const mockContacts: Contact[] = [
   },
   {
     id: '2',
-    name: 'المردغلي',
+    name: 'ابو عائشة',
     username: '@martin1',
     status: 'online',
     avatarUrl: '/images/logo.png',
@@ -23,7 +23,7 @@ export const mockContacts: Contact[] = [
   },
   {
     id: '3',
-    name: 'جسومي المعفط',
+    name: ' ابو خديجة',
     username: '@andrew',
     status: 'online',
     avatarUrl: '/images/logo.png',
@@ -36,7 +36,7 @@ export const mockContacts: Contact[] = [
     name: 'أبو محمد',
     username: '@abumohammed',
     status: 'last seen just now',
-    avatarUrl: '/images/logo13.png',
+    avatarUrl: '/images/logo.png',
     isOnline: false,
     bio: 'مدير مهام شعبة التجنيد الاستخباراتي',
     mission: 'أمن دولة'
@@ -46,14 +46,14 @@ export const mockContacts: Contact[] = [
     name: ' الإدارة ابو قحطان ' ,
     username: '@admin',
     status: 'online',
-    avatarUrl: '/images/logo12.png',
+    avatarUrl: '/images/logo.png',
     isOnline: true,
     bio: 'إدارة فريق الأمن السيبراني',
     mission: 'إدارة عامة'
   },
   {
     id: '6',
-    name: 'Alice Johnson',
+    name: 'ابو نضال',
     username: '@alice',
     status: 'last seen 2 hours ago',
     avatarUrl: '/images/logo.png',
@@ -63,7 +63,7 @@ export const mockContacts: Contact[] = [
   },
   {
     id: '7',
-    name: 'بهاء بندورة',
+    name: ' ابو بهاء ',
     username: '@baha',
     status: 'last seen 1 hour ago',
     avatarUrl: '/images/logo.png',
@@ -73,7 +73,7 @@ export const mockContacts: Contact[] = [
   },
   {
     id: '8',
-    name: 'محمد صطوف',
+    name: ' ابو صالح',
     username: '@mohammed',
     status: 'last seen 30 minutes ago',
     avatarUrl: '/images/logo.png',
@@ -89,7 +89,7 @@ export const mockChats: ChatItem[] = [
     title: 'Saved Messages',
     subtitle: 'image.jpeg',
     time: 'Fri',
-    avatarUrl: '/images/logo10.png',
+    avatarUrl: '/images/logo.png',
     pinned: true,
     isRead: true,
     isMuted: false,
@@ -101,7 +101,7 @@ export const mockChats: ChatItem[] = [
     title: 'Blue Team',
     subtitle: 'Hasan Web · GIF',
     time: '9/29',
-    avatarUrl: '/images/logo11.png',
+    avatarUrl: '/images/logo.png',
     unreadCount: 0,
     isRead: true,
     pinned: false,
@@ -113,7 +113,7 @@ export const mockChats: ChatItem[] = [
     title: 'أبو محمد',
     subtitle: 'مرحبا انا استخدم واتس ب؟',
     time: 'Sun',
-    avatarUrl: '/images/logo13.png',
+    avatarUrl: '/images/logo.png',
     unreadCount: 0,
     isRead: false,
     pinned: false,
@@ -125,7 +125,7 @@ export const mockChats: ChatItem[] = [
     title: ' أبو قحطان الإدارة',
     subtitle: '🌐👑 تعميم: على جميع العاملين في مشروع الحماية ...',
     time: '11:30',
-    avatarUrl: '/images/logo12.png',
+    avatarUrl: '/images/logox.svg',
     unreadCount: 153,
     isRead: false,
     pinned: false,
@@ -134,8 +134,8 @@ export const mockChats: ChatItem[] = [
   },
   {
     id: '5',
-    title: 'Alice Johnson',
-    subtitle: 'What about a super ice...',
+    title: 'ابو مروان',
+    subtitle: 'نريد واحد يشتغل باك للضرورة...',
     time: '11:30',
     avatarUrl: '/images/logo.png',
     unreadCount: 0,
@@ -146,7 +146,7 @@ export const mockChats: ChatItem[] = [
   },
   {
     id: '6',
-    title: 'بهاء بندورة',
+    title: ' ابو بهاء ',
     subtitle: 'Photo',
     time: '10:42',
     avatarUrl: '/images/logo.png',
@@ -158,7 +158,7 @@ export const mockChats: ChatItem[] = [
   },
   {
     id: '7',
-    title: ' محمد صطوف',
+    title: '  ابو محمد ',
     subtitle: ' اشو الوضع ',
     time: 'Sat',
     avatarUrl: '/images/logo.png',
@@ -173,7 +173,7 @@ export const mockChats: ChatItem[] = [
 export const mockCalls: Call[] = [
   {
     id: '1',
-    name: 'المردغلي',
+    name: 'مرشد الفئة',
     avatarUrl: '/images/logo.png',
     type: CallType.OUTGOING,
     time: '10/13',
@@ -181,7 +181,7 @@ export const mockCalls: Call[] = [
   },
   {
     id: '2',
-    name: 'كرواسون المعفط',
+    name: 'كرواسون ',
     avatarUrl: '/images/logo.png',
     type: CallType.OUTGOING,
     time: '10/11',
@@ -189,7 +189,7 @@ export const mockCalls: Call[] = [
   },
   {
     id: '3',
-    name: 'جسومي العفطي',
+    name: '  ابو سعد',
     avatarUrl: '/images/logo.png',
     type: CallType.OUTGOING,
     time: '10/8',
@@ -197,14 +197,14 @@ export const mockCalls: Call[] = [
   },
   {
     id: '4',
-    name: 'بقلاوة الحلاوة',
+    name: ' المالح',
     avatarUrl: '/images/logo.png',
     type: CallType.MISSED,
     time: '9/30'
   },
   {
     id: '5',
-    name: 'بيل الكلاسيكي',
+    name: ' الكلاسيكي',
     avatarUrl: '/images/logo.png',
     type: CallType.INCOMING,
     time: '9/24',
@@ -212,7 +212,7 @@ export const mockCalls: Call[] = [
   },
   {
     id: '6',
-    name: 'أبو جذبات البروباغندي',
+    name: '  البروباغندي',
     avatarUrl: '/images/logo.png',
     type: CallType.OUTGOING,
     time: '9/16',
@@ -220,7 +220,7 @@ export const mockCalls: Call[] = [
   },
   {
     id: '7',
-    name: 'الجولاني',
+    name: 'ابو خالد',
     avatarUrl: '/images/logo.png',
     type: CallType.OUTGOING,
     time: '9/15',
@@ -236,15 +236,15 @@ export const mockCalls: Call[] = [
   },
   {
     id: '9',
-    name: 'تع بورد ',
-    avatarUrl: '/images/logox.avg',
+    name: 'أبو حمزة  ',
+    avatarUrl: '/images/logo.png',
     type: CallType.INCOMING,
     time: '9/10',
     duration: '6:30'
   },
   {
     id: '10',
-    name: 'ميركافا المفرطب',
+    name: 'ميركافا ',
     avatarUrl: '/images/logo.png',
     type: CallType.OUTGOING,
     time: '9/10',
@@ -252,23 +252,23 @@ export const mockCalls: Call[] = [
   },
   {
     id: '11',
-    name: 'ديمتري كرستوجورجينا',
-    avatarUrl: '/images/logo13.png',
+    name: 'ديمتري ',
+    avatarUrl: '/images/logo.png',
     type: CallType.OUTGOING,
     time: '9/6',
     duration: '2:15'
   },
   {
     id: '12',
-    name: 'البندورة الحمرة',
-    avatarUrl: '/images/logo12.png',
+    name: ' ابو احمد',
+    avatarUrl: '/images/logo.png',
     type: CallType.MISSED,
     time: '8/22'
   },
   {
     id: '13',
-    name: 'الشطاف المبربق',
-    avatarUrl: '/images/logo11.png',
+    name: 'ابو عبدو',
+    avatarUrl: '/images/logo.png',
     type: CallType.OUTGOING,
     time: '8/20',
     duration: '1:50'
@@ -278,7 +278,7 @@ export const mockCalls: Call[] = [
 export const mockMessages: Message[] = [
   {
     id: '1',
-    content: 'يمعود عم اشتغل على برنامج مراقبة براد الشاي',
+    content: 'يمعود عم اشتغل على برنامج مراقبة  ',
     isSentByMe: false,
     time: '10:10',
     isRead: true,
@@ -287,7 +287,7 @@ export const mockMessages: Message[] = [
   },
   {
     id: '2',
-    content: '/images/logo.png10',
+    content: '/images/logo.png',
     isSentByMe: false,
     time: '10:15',
     isRead: true,
@@ -296,7 +296,7 @@ export const mockMessages: Message[] = [
   },
   {
     id: '3',
-    content: '/images/logo3.png',
+    content: '/images/logo.png',
     isSentByMe: false,
     time: '10:15',
     isRead: true,
@@ -314,7 +314,7 @@ export const mockMessages: Message[] = [
   },
   {
     id: '5',
-    content: 'أنت ما تبطل جذب',
+    content: 'أنت ما تبطل سوالفك',
     isSentByMe: true,
     time: '11:43',
     isRead: true,
@@ -323,7 +323,7 @@ export const mockMessages: Message[] = [
   },
   {
     id: '6',
-    content: 'بدي اشخلك بصباحك ما اجحشك?',
+    content: 'بدي رقم ابو المغاوير?',
     isSentByMe: false,
     time: '11:45',
     isRead: true,
@@ -332,7 +332,7 @@ export const mockMessages: Message[] = [
   },
   {
     id: '7',
-    content: 'يا مجنون',
+    content: 'ما عندي',
     isSentByMe: false,
     time: '11:45',
     isRead: true,
@@ -341,7 +341,7 @@ export const mockMessages: Message[] = [
   },
   {
     id: '8',
-    content: 'طير احمر طير مبرقع',
+    content: ' يا اخي عالسريع الامر مهم',
     isSentByMe: true,
     time: '11:50',
     isRead: true,
@@ -350,7 +350,7 @@ export const mockMessages: Message[] = [
   },
   {
     id: '9',
-    content: '/images/logo1.png',
+    content: '/images/logo.png',
     isSentByMe: true,
     time: '11:51',
     isRead: true,

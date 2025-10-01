@@ -5,13 +5,15 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Camera, Save, LogOut, AlertTriangle } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useLanguage } from '@/components/LanguageProvider';
 
 export default function EditProfileScreen() {
   const router = useRouter();
-  const [name, setName] = useState('الدولة الغيمجة أبو قحطان العكيدي ');
+  const { t, isRTL } = useLanguage();
+  const [name, setName] = useState('    ابو قحطان ');
   const [username, setUsername] = useState('@abu_qhatan');
-  const [bio, setBio] = useState(' مهندس انظمة ونابغة قد الدنيا، يتخلى عن الدولة والدولة ما تتخلى عنه (صاحب حصانة كاملة حتى الجولاني ما يقدرله) ');
-  const [mission, setMission] = useState('المرشد الأعلى المفدى (اضرب تحية)');
+  const [bio, setBio] = useState(' (      مدير شعبة التجنيد السيبراني) ');
+  const [mission, setMission] = useState('المرشد الأعلى  ');
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const handleSave = () => {
@@ -51,13 +53,13 @@ export default function EditProfileScreen() {
           >
             <ArrowLeft size={20} className="text-primary" />
           </button>
-          <h1 className="text-lg font-semibold text-primary">Edit Profile</h1>
+          <h1 className="text-lg font-semibold text-primary professional-heading">{t('settings.editProfile')}</h1>
           <button
             onClick={handleSave}
             className="text-primary text-sm font-medium hover:text-primary/80 transition-colors flex items-center space-x-1"
           >
             <Save size={16} />
-            <span>Save</span>
+            <span>{t('app.save')}</span>
           </button>
         </div>
       </div>
@@ -72,13 +74,15 @@ export default function EditProfileScreen() {
           className="flex flex-col items-center mb-8"
         >
           <div className="relative">
-            <Image
-              src="/images/logo.png"
-              alt="Profile"
-              width={120}
-              height={120}
-              className="rounded-full object-cover w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32"
-            />
+            <div className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 p-2 shadow-professional">
+              <Image
+                src="/images/logox.svg"
+                alt="Profile"
+                width={120}
+                height={120}
+                className="rounded-full object-cover w-full h-full"
+              />
+            </div>
             {/* Change photo button - functionality to be implemented */}
             <button 
               className="absolute -bottom-2 -right-2 w-10 h-10 bg-primary rounded-full flex items-center justify-center hover:bg-primary/90 transition-colors"
@@ -88,7 +92,7 @@ export default function EditProfileScreen() {
               <Camera size={20} className="text-white" />
             </button>
           </div>
-          <p className="text-sm text-on-surface-variant mt-4">Tap to change photo</p>
+          <p className="text-sm text-on-surface-variant mt-4 professional-body">{t('additionalSettings.tapToChangePhoto')}</p>
         </motion.div>
 
         {/* Form Fields */}

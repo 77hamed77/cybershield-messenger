@@ -11,6 +11,7 @@ import CallRow from './CallRow';
 import TabButton from './TabButton';
 import VoiceCallScreen from '@/components/calls/VoiceCallScreen';
 import VideoCallScreen from '@/components/calls/VideoCallScreen';
+import { useLanguage } from '@/components/LanguageProvider';
 
 export default function CallsScreen() {
   const router = useRouter();
@@ -20,6 +21,7 @@ export default function CallsScreen() {
   const [showVoiceCall, setShowVoiceCall] = useState(false);
   const [showVideoCall, setShowVideoCall] = useState(false);
   const [currentCall, setCurrentCall] = useState<Call | null>(null);
+  const { t, isRTL } = useLanguage();
 
   const filteredCalls = calls.filter(call => {
     const matchesSearch = call.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -86,39 +88,50 @@ export default function CallsScreen() {
     }
   };
 
-  return (
-    <div className="h-full flex flex-col bg-background">
-      {/* Header */}
-      <div className="bg-app-bar backdrop-blur-sm border-b border-border">
+    return (
+      <div className="h-full flex flex-col bg-background relative">
+        {/* Top Decorative Pattern */}
+        <div
+          className="absolute top-0 left-0 right-0 h-24 opacity-[0.06] z-0"
+          style={{
+            backgroundImage: 'url(/images/pattern2.png)',
+            backgroundRepeat: 'repeat-x',
+            backgroundSize: '250px 250px',
+            backgroundPosition: 'top center',
+          }}
+        />
+        
+        {/* Header */}
+        <div className="bg-app-bar backdrop-blur-sm border-b border-border relative z-10">
         <div className="px-4 sm:px-6 py-3">
           {/* Top Row */}
           <div className="flex items-center justify-between mb-4">
             {/* Title */}
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 rounded-lg overflow-hidden shadow-md">
+              <div className="w-8 h-8 rounded-lg overflow-hidden shadow-md bg-gradient-to-br from-primary/20 to-accent/20 p-1">
                 <Image
-                  src="/images/logo.png"
+                  src="/images/logox.svg"
                   alt="CyberShield"
-                  width={32}
-                  height={32}
-                  className="object-contain"
+                  width={24}
+                  height={24}
+                  className="object-contain w-full h-full"
                 />
               </div>
               <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">Calls</h1>
-                <p className="text-xs text-on-surface-variant">Recent conversations</p>
+                <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent professional-heading">{t('calls.title')}</h1>
+                <p className="text-xs text-on-surface-variant professional-subheading">{t('calls.subtitle')}</p>
               </div>
             </div>
             
             {/* Tabs */}
             <div className="flex items-center space-x-2">
               <TabButton
-                label="All"
+                label={t('calls.allCalls')}
                 active={activeTab === 'all'}
                 onClick={() => setActiveTab('all')}
               />
               <TabButton
-                label="Missed"
+                label={t('calls.missed')}
                 active={activeTab === 'missed'}
                 onClick={() => setActiveTab('missed')}
               />
@@ -128,19 +141,19 @@ export default function CallsScreen() {
           {/* Search Bar */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-on-surface-variant" size={20} />
-            <input
-              type="text"
-              placeholder="Search for calls or users"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-input border border-border rounded-2xl text-on-surface placeholder-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200"
-            />
+                   <input
+                     type="text"
+                     placeholder={t('calls.searchPlaceholder')}
+                     value={searchQuery}
+                     onChange={(e) => setSearchQuery(e.target.value)}
+                     className="w-full pl-10 pr-4 py-2 professional-input rounded-2xl text-on-surface placeholder-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200"
+                   />
           </div>
         </div>
       </div>
 
       {/* Calls List */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto relative z-10">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
